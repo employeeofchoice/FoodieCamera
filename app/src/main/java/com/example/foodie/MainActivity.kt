@@ -12,6 +12,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
@@ -87,6 +90,40 @@ class MainActivity : AppCompatActivity() {
 
             // Bind Bitmap image to ImageView
             findViewById<ImageView>(R.id.ivImage).setImageBitmap(imageBitmap)
+
+            //Barcode Scanning
+            val options = BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(
+                    Barcode.FORMAT_QR_CODE,
+                    Barcode.FORMAT_AZTEC)
+                .build()
+            private class YourImageAnalyzer : ImageAnalysis.Analyzer {
+
+                override fun analyze(imageProxy: ImageProxy) {
+                    val mediaImage = imageProxy.image
+                    if (mediaImage != null) {
+                        val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+                        // Pass image to an ML Kit Vision API
+                        // ...
+                        val image = InputImage.fromMediaImage(mediaImage, rotation)
+
+                        val scanner = BarcodeScanning.getClient()
+                        // Or, to specify the formats to recognize:
+                        // val scanner = BarcodeScanning.getClient(options)
+
+                        //Process the Image
+                        val result = scanner.process(image)
+                            .addOnSuccessListener { barcodes ->
+                                // Task completed successfully
+                                // ...
+                            }
+                            .addOnFailureListener {
+                                // Task failed with an exception
+                                // ...
+                            }
+                    }
+                }
+            }
+                }
+            }
         }
-    }
-}
